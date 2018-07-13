@@ -1,10 +1,13 @@
 version: 2
 
+image_and_dir: &image_and_dir
+  docker:
+    - image: circleci/node:7.10
+  working_directory: ~/repo
+
 jobs:
   build:
-    docker:
-      - image: circleci/node:7.10
-    working_directory: ~/repo
+    <<: *image_and_dir
     steps:
       - checkout
       - restore_cache:
@@ -20,3 +23,25 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  test:
+    <<: *image_and_dir
+    steps:
+      - run: ls -la
+      - attach_workspace:
+          at: .
+      - run: ls -la
+      - run: ls -la node_modules
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
