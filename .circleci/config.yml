@@ -28,7 +28,7 @@ jobs:
           paths:
             - .
 
-  test:
+  look:
     <<: *image_and_dir
     steps:
       - run: ls -la
@@ -39,9 +39,9 @@ jobs:
 
 workflows:
   version: 2
-  build_and_test:
+  build_and_look:
     jobs:
       - build
-      - test:
+      - look:
           requires:
             - build
