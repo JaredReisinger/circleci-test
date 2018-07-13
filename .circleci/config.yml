@@ -1,13 +1,13 @@
 version: 2
 
-image_and_dir: &image_and_dir
+defaults: &defaults
   docker:
     - image: circleci/node:7.10
   working_directory: ~/repo
 
 jobs:
   build:
-    <<: *image_and_dir
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
@@ -16,6 +16,8 @@ jobs:
             - v1-dependencies-
       - run: pwd
       - run: ls -la
+      # if we used `npm ci`, we wouldn't need/want the cache, as `ci`
+      # force-installs everything.
       - run: npm install
       - run: ls -la
       - run: ls -la node_modules
@@ -29,31 +31,31 @@ jobs:
             - .
 
   look:
-    <<: *image_and_dir
+    <<: *defaults
     steps:
       - run: ls -la
-      - attach_workspace:
-          at: .
+      - attach_workspace: { at: . }
       - run: ls -la
-      - run: ls -la node_modules
 
   look2:
-    <<: *image_and_dir
+    <<: *defaults
     steps:
       - run: ls -la
-      - attach_workspace:
-          at: .
+      - attach_workspace: { at: . }
       - run: ls -la
-      - run: ls -la node_modules
+
+  bump_version:
+    <<: *defaults
+    steps:
+      - attach_workspace: { at: . }
+      - run: npm version patch
+      - run: cat package.json
 
   final:
-    <<: *image_and_dir
+    <<: *defaults
     steps:
-      - run: ls -la
-      - attach_workspace:
-          at: .
-      - run: ls -la
-      - run: ls -la node_modules
+      - attach_workspace: { at: . }
+      - run: cat package.json
 
 workflows:
   version: 2
@@ -66,7 +68,17 @@ workflows:
       - look2:
           requires:
             - build
+      - bump_version:
+          requires:
+            - look
+            - look2
+          # filters:
+          #   tags:
+          #     only: /^v.*/
+          #   branches:
+          #     ignore: /.*/
       - final:
           requires:
             - look
             - look2
+            - bump_version
