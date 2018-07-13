@@ -24,25 +24,26 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - node_modules
+            - .
 
   look:
     <<: *defaults
     steps:
-      - checkout
       - attach_workspace: { at: . }
       - run: cat package.json
 
   look2:
     <<: *defaults
     steps:
-      - checkout
       - attach_workspace: { at: . }
       - run: cat package.json
 
   bump_version:
     <<: *defaults
     steps:
+      # We have to use 'checkout' in order to get github's info injected into
+      # ~/.ssh/known_hosts.  We overwrite the checkout with the information from
+      # the workspace.
       - checkout
       - attach_workspace: { at: . }
       - run: cat package.json
@@ -62,7 +63,6 @@ jobs:
   final:
     <<: *defaults
     steps:
-      - checkout
       - attach_workspace: { at: . }
       - run: cat package.json
 
