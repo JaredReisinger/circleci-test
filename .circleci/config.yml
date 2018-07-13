@@ -48,6 +48,9 @@ jobs:
     <<: *defaults
     steps:
       - attach_workspace: { at: . }
+      - run: git config --global push.default simple
+      - run: git config --global user.email "npm@jaredreisinger.com"
+      - run: git config --global user.name "Automated Publisher"
       - run: npm version patch
       - run: cat package.json
 
