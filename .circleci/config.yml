@@ -2,7 +2,7 @@ version: 2
 
 defaults: &defaults
   docker:
-    - image: circleci/node:7.10
+    - image: circleci/node:10.6
   working_directory: ~/repo
 
 jobs:
@@ -48,15 +48,18 @@ jobs:
     steps:
       - attach_workspace: { at: . }
       - run: cat package.json
-      - run: git config --global push.default simple
-      - run: git config --global user.email "npm@jaredreisinger.com"
-      - run: git config --global user.name "Automated Publisher"
+      - run: |
+            git config --global push.default simple
+            git config --global user.email "npm@jaredreisinger.com"
+            git config --global user.name "Automated Publisher"
       - run: npm version patch
       - run: cat package.json
+      - run: git push --follow-tags
       - persist_to_workspace:
           root: .
           paths:
             - package.json
+            - .git
 
   final:
     <<: *defaults
@@ -79,11 +82,9 @@ workflows:
           requires:
             - look
             - look2
-          # filters:
-          #   tags:
-          #     only: /^v.*/
-          #   branches:
-          #     ignore: /.*/
+          filters:
+            branches:
+              only: master
       - final:
           requires:
             - look
