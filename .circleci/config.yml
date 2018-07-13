@@ -10,17 +10,18 @@ jobs:
     <<: *defaults
     steps:
       - checkout
+      - run: cat package.json
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
             - v1-dependencies-
-      - run: pwd
-      - run: ls -la
+      # - run: pwd
+      # - run: ls -la
       # if we used `npm ci`, we wouldn't need/want the cache, as `ci`
       # force-installs everything.
       - run: npm install
-      - run: ls -la
-      - run: ls -la node_modules
+      # - run: ls -la
+      # - run: ls -la node_modules
       - save_cache:
           paths:
             - node_modules
@@ -33,26 +34,29 @@ jobs:
   look:
     <<: *defaults
     steps:
-      - run: ls -la
       - attach_workspace: { at: . }
-      - run: ls -la
+      - run: cat package.json
 
   look2:
     <<: *defaults
     steps:
-      - run: ls -la
       - attach_workspace: { at: . }
-      - run: ls -la
+      - run: cat package.json
 
   bump_version:
     <<: *defaults
     steps:
       - attach_workspace: { at: . }
+      - run: cat package.json
       - run: git config --global push.default simple
       - run: git config --global user.email "npm@jaredreisinger.com"
       - run: git config --global user.name "Automated Publisher"
       - run: npm version patch
       - run: cat package.json
+      - persist_to_workspace:
+          root: .
+          paths:
+            - package.json
 
   final:
     <<: *defaults
