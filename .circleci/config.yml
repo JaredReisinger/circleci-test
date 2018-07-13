@@ -37,6 +37,24 @@ jobs:
       - run: ls -la
       - run: ls -la node_modules
 
+  look2:
+    <<: *image_and_dir
+    steps:
+      - run: ls -la
+      - attach_workspace:
+          at: .
+      - run: ls -la
+      - run: ls -la node_modules
+
+  final:
+    <<: *image_and_dir
+    steps:
+      - run: ls -la
+      - attach_workspace:
+          at: .
+      - run: ls -la
+      - run: ls -la node_modules
+
 workflows:
   version: 2
   build_and_look:
@@ -45,3 +63,10 @@ workflows:
       - look:
           requires:
             - build
+      - look2:
+          requires:
+            - build
+      - final:
+          requires:
+            - look
+            - look2
