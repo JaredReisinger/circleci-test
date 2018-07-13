@@ -51,7 +51,7 @@ jobs:
             git config --global push.default simple
             git config --global user.email "npm@jaredreisinger.com"
             git config --global user.name "Automated Publisher"
-      - run: npm version patch
+      - run: npm version patch --message "bump version to %s [ci skip]"
       - run: cat package.json
       - run: git push --follow-tags
       - persist_to_workspace:
