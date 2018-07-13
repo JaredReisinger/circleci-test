@@ -1,0 +1,22 @@
+{
+  "name": "circleci-test",
+  "version": "0.0.1",
+  "description": "test for circleci config",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JaredReisinger/circleci-test.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JaredReisinger/circleci-test/issues"
+  },
+  "homepage": "https://github.com/JaredReisinger/circleci-test#readme",
+  "dependencies": {
+    "lodash": "4.17.10"
+  }
+}
