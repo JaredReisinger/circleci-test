@@ -5,46 +5,45 @@ defaults: &defaults
     - image: circleci/node:10.6
   working_directory: ~/repo
 
+# The traditional CircleCI jobs description includes restore_cache and
+# save_cache to get performance gains across runs.  This is invalidated by
+# using "npm ci", however, because it force-removes the "node_modules"
+# directory before beginning the install.
+#
+# We do, however, make use of a CircleCI workspace to get persisted files
+# between jobs along the workflow... such that later jobs do not also need to
+# run "npm ci", they only need to attach_workspace.
+
 jobs:
   build:
     <<: *defaults
     steps:
       - checkout
       - run: cat package.json
-      # - restore_cache:
-      #     keys:
-      #       - v1-dependencies-{{ checksum "package.json" }}
-      #       - v1-dependencies-
-      # if we used `npm ci`, we wouldn't need/want the cache, as `ci`
-      # force-installs everything.
-      # - run: npm install
       - run: npm ci
-      # - run: ls -la
-      # - run: ls -la node_modules
-      # - save_cache:
-      #     paths:
-      #       - node_modules
-      #     key: v1-dependencies-{{ checksum "package.json" }}
       - persist_to_workspace:
           root: .
           paths:
-            - .
+            - node_modules
 
   look:
     <<: *defaults
     steps:
+      - checkout
       - attach_workspace: { at: . }
       - run: cat package.json
 
   look2:
     <<: *defaults
     steps:
+      - checkout
       - attach_workspace: { at: . }
       - run: cat package.json
 
   bump_version:
     <<: *defaults
     steps:
+      - checkout
       - attach_workspace: { at: . }
       - run: cat package.json
       - run: |
@@ -63,6 +62,7 @@ jobs:
   final:
     <<: *defaults
     steps:
+      - checkout
       - attach_workspace: { at: . }
       - run: cat package.json
 
