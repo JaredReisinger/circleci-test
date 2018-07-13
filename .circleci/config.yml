@@ -11,11 +11,11 @@ jobs:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
             - v1-dependencies-
-      - show_pwd: pwd
-      - show_files: ls -la
+      - run: pwd
+      - run: ls -la
       - run: npm install
-      - show_files_after: ls -la
-      - show_node_modules_after: ls -la node_modules
+      - run: ls -la
+      - run: ls -la node_modules
       - save_cache:
           paths:
             - node_modules
