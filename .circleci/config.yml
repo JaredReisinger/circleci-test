@@ -11,21 +11,20 @@ jobs:
     steps:
       - checkout
       - run: cat package.json
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
-      # - run: pwd
-      # - run: ls -la
+      # - restore_cache:
+      #     keys:
+      #       - v1-dependencies-{{ checksum "package.json" }}
+      #       - v1-dependencies-
       # if we used `npm ci`, we wouldn't need/want the cache, as `ci`
       # force-installs everything.
-      - run: npm install
+      # - run: npm install
+      - run: npm ci
       # - run: ls -la
       # - run: ls -la node_modules
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+      # - save_cache:
+      #     paths:
+      #       - node_modules
+      #     key: v1-dependencies-{{ checksum "package.json" }}
       - persist_to_workspace:
           root: .
           paths:
